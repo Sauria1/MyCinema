@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native';
-import { initializeApp } from '@firebase/app';
+import app from './firebaseConfig' // FireBaseConfig
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from '@firebase/auth';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -8,68 +8,59 @@ import HomeScreen from './components/HomeScreen'
 import SearchScreen from './components/SearchScreen'
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID
-};
 
-const app = initializeApp(firebaseConfig);
 const Tab = createBottomTabNavigator();
 
 const AuthScreen = ({ email, setEmail, password, setPassword, isLogin, setIsLogin, handleAuthentication }) => {
   return (
-    <View style={styles.authContainer}>
-      <Text style={styles.header}>{isLogin ? 'Kirjaudu sisään' : 'Rekisteröidy'}</Text>
+      <View style={styles.authContainer}>
+        <Text style={styles.header}>{isLogin ? 'Kirjaudu sisään' : 'Rekisteröidy'}</Text>
 
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Email"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Password"
-        secureTextEntry
-      />
+        <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Email"
+            autoCapitalize="none"
+        />
+        <TextInput
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Password"
+            secureTextEntry
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleAuthentication}>
-        <Text style={styles.buttonText}>{isLogin ? 'Kirjaudu sisään' : 'Rekisteröidy'}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleAuthentication}>
+          <Text style={styles.buttonText}>{isLogin ? 'Kirjaudu sisään' : 'Rekisteröidy'}</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
-        <Text style={styles.switchText}>{isLogin ? 'Ei tiliä? Rekisteröidy' : 'Onko jo tili? Kirjaudu'}</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+          <Text style={styles.switchText}>{isLogin ? 'Ei tiliä? Rekisteröidy' : 'Onko jo tili? Kirjaudu'}</Text>
+        </TouchableOpacity>
+      </View>
   );
 };
 
 const AuthenticatedScreen = ({ user, handleAuthentication }) => {
-return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-            if (route.name === 'Etusivu') {
-              iconName = 'home';
-            } else if (route.name === 'Haku') {
-              iconName = 'search';
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-        })}>
-        <Tab.Screen name="Etusivu" children={() => <HomeScreen user={user} handleAuthentication={handleAuthentication} />} />
-        <Tab.Screen name="Haku" component={SearchScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+  return (
+      <NavigationContainer>
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+                if (route.name === 'Etusivu') {
+                  iconName = 'home';
+                } else if (route.name === 'Haku') {
+                  iconName = 'search';
+                }
+                return <Ionicons name={iconName} size={size} color={color} />;
+              },
+            })}>
+          <Tab.Screen name="Etusivu" children={() => <HomeScreen user={user} handleAuthentication={handleAuthentication} />} />
+          <Tab.Screen name="Haku" component={SearchScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
   );
 };
 
@@ -105,21 +96,21 @@ export default App = () => {
   };
 
   return (
-    <ImageBackground style={styles.background} resizeMode="cover">
-      {user ? (
-        <AuthenticatedScreen user={user} handleAuthentication={handleAuthentication} />
-      ) : (
-        <AuthScreen
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          isLogin={isLogin}
-          setIsLogin={setIsLogin}
-          handleAuthentication={handleAuthentication}
-        />
-      )}
-    </ImageBackground>
+      <ImageBackground style={styles.background} resizeMode="cover">
+        {user ? (
+            <AuthenticatedScreen user={user} handleAuthentication={handleAuthentication} />
+        ) : (
+            <AuthScreen
+                email={email}
+                setEmail={setEmail}
+                password={password}
+                setPassword={setPassword}
+                isLogin={isLogin}
+                setIsLogin={setIsLogin}
+                handleAuthentication={handleAuthentication}
+            />
+        )}
+      </ImageBackground>
   );
 };
 
